@@ -54,40 +54,40 @@ public class MotorPH {
     private static List<Employee> initializeEmployees() {
         List<Employee> employees = new ArrayList<>();
         // Add all employees with their details
-        employees.add(new Employee("10001", "Garcia", "Manuel III", "10/11/1983", 535.71, 90000, 1500, 2000, 1000));
-        employees.add(new Employee("10002", "Lim", "Antonio", "06/19/1988", 357.14, 60000, 1500, 2000, 1000));
-        employees.add(new Employee("10003", "Aquino", "Bianca Sofia", "08/04/1989", 357.14, 60000, 1500, 2000, 1000));
-        employees.add(new Employee("10004", "Reyes", "Isabella", "06/16/1994", 357.14, 60000, 1500, 2000, 1000));
-        employees.add(new Employee("10005", "Hernandez", "Eduard", "09/23/1989", 313.51, 52670, 1500, 1000, 1000));
-        employees.add(new Employee("10006", "Villanueva", "Andrea Mae", "02/14/1988", 313.51, 52670, 1500, 1000, 1000));
-        employees.add(new Employee("10007", "San Jose", "Brad", "03/15/1996", 255.80, 42975, 1500, 800, 800));
-        employees.add(new Employee("10008", "Romualdez", "Alice", "05/14/1992", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10009", "Atienza", "Rosie", "09/24/1948", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10010", "Alvaro", "Roderick", "03/30/1988", 313.51, 52670, 1500, 1000, 1000));
-        employees.add(new Employee("10011", "Salcedo", "Anthony", "09/14/1993", 302.53, 50825, 1500, 1000, 1000));
-        employees.add(new Employee("10012", "Lopez", "Josie", "01/14/1987", 229.02, 38475, 1500, 800, 800));
-        employees.add(new Employee("10013", "Farala", "Martha", "01/11/1942", 142.86, 24000, 1500, 500, 500));
-        employees.add(new Employee("10014", "Martinez", "Leila", "07/11/1970", 142.86, 24000, 1500, 500, 500));
-        employees.add(new Employee("10015", "Romualdez", "Fredrick", "03/10/1985", 318.45, 53500, 1500, 1000, 1000));
-        employees.add(new Employee("10016", "Mata", "Christian", "10/21/1987", 255.80, 42975, 1500, 800, 800));
-        employees.add(new Employee("10017", "De Leon", "Selena", "02/20/1975", 249.11, 41850, 1500, 800, 800));
-        employees.add(new Employee("10018", "San Jose", "Allison", "06/24/1986", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10019", "Rosario", "Cydney", "10/06/1996", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10020", "Bautista", "Mark", "02/12/1991", 138.39, 23250, 1500, 500, 500));
-        employees.add(new Employee("10021", "Lazaro", "Darlene", "11/25/1985", 138.39, 23250, 1500, 500, 500));
-        employees.add(new Employee("10022", "Delos Santos", "Kolby", "02/26/1980", 142.86, 24000, 1500, 500, 500));
-        employees.add(new Employee("10023", "Santos", "Vella", "12/31/1983", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10024", "Del Rosario", "Tomas", "12/18/1978", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10025", "Tolentino", "Jacklyn", "05/19/1984", 142.86, 24000, 1500, 500, 500));
-        employees.add(new Employee("10026", "Gutierrez", "Percival", "12/18/1970", 147.32, 24750, 1500, 500, 500));
-        employees.add(new Employee("10027", "Manalaysay", "Garfield", "08/28/1986", 147.32, 24750, 1500, 500, 500));
-        employees.add(new Employee("10028", "Villegas", "Lizeth", "12/12/1981", 142.86, 24000, 1500, 500, 500));
-        employees.add(new Employee("10029", "Ramos", "Carol", "08/20/1978", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10030", "Maceda", "Emelia", "04/14/1973", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10031", "Aguilar", "Delia", "01/27/1989", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10032", "Castro", "John Rafael", "02/09/1992", 313.51, 52670, 1500, 1000, 1000));
-        employees.add(new Employee("10033", "Martinez", "Carlos Ian", "11/16/1990", 313.51, 52670, 1500, 1000, 1000));
-        employees.add(new Employee("10034", "Santos", "Beatriz", "08/07/1990", 313.51, 52670, 1500, 1000, 1000));
+        employees.add(new Employee("10001", "Garcia", "Manuel III", "10/11/1983", "Regular", "Chief Executive Officer", 535.71, 90000, 1500, 2000, 1000));
+        employees.add(new Employee("10002", "Lim", "Antonio", "06/19/1988","Regular", "Chief Operating Officer", 357.14, 60000, 1500, 2000, 1000));
+        employees.add(new Employee("10003", "Aquino", "Bianca Sofia", "08/04/1989", "Regular", "Chief Finance Officer", 357.14, 60000, 1500, 2000, 1000));
+        employees.add(new Employee("10004", "Reyes", "Isabella", "06/16/1994", "Regular", "Chief Marketing Officer", 357.14, 60000, 1500, 2000, 1000));
+        employees.add(new Employee("10005", "Hernandez", "Eduard", "09/23/1989", "Regular", "IT Operations and Systems", 313.51, 52670, 1500, 1000, 1000));
+        employees.add(new Employee("10006", "Villanueva", "Andrea Mae", "02/14/1988","Regular", "HR Manager", 313.51, 52670, 1500, 1000, 1000));
+        employees.add(new Employee("10007", "San Jose", "Brad", "03/15/1996", "Regular", "HR Team Leader", 255.80, 42975, 1500, 800, 800));
+        employees.add(new Employee("10008", "Romualdez", "Alice", "05/14/1992", "Regular", "HR Rank and File", 133.93, 22500, 1500, 500, 500));
+        employees.add(new Employee("10009", "Atienza", "Rosie", "09/24/1948", "Regular", "HR Rank and File", 133.93, 22500, 1500, 500, 500));
+        employees.add(new Employee("10010", "Alvaro", "Roderick", "03/30/1988", "Regular", "Accounting Head", 313.51, 52670, 1500, 1000, 1000));
+        employees.add(new Employee("10011", "Salcedo", "Anthony", "09/14/1993", "Regular", "Payroll Manager", 302.53, 50825, 1500, 1000, 1000));
+        employees.add(new Employee("10012", "Lopez", "Josie", "01/14/1987", "Regular", "Payroll Team Leader", 229.02, 38475, 1500, 800, 800));
+        employees.add(new Employee("10013", "Farala", "Martha", "01/11/1942", "Regular", "Payroll Rank and File", 142.86, 24000, 1500, 500, 500));
+        employees.add(new Employee("10014", "Martinez", "Leila", "07/11/1970", "Regular", "Payroll Rank and File", 142.86, 24000, 1500, 500, 500));
+        employees.add(new Employee("10015", "Romualdez", "Fredrick", "03/10/1985", "Regular", "Account Manager",  318.45, 53500, 1500, 1000, 1000));
+        employees.add(new Employee("10016", "Mata", "Christian", "10/21/1987", "Regular", "Account Team Leader",  255.80, 42975, 1500, 800, 800));
+        employees.add(new Employee("10017", "De Leon", "Selena", "02/20/1975", "Regular", "Account Team Leader", 249.11, 41850, 1500, 800, 800));
+        employees.add(new Employee("10018", "San Jose", "Allison", "06/24/1986", "Regular", "Account Rank and File", 133.93, 22500, 1500, 500, 500));
+        employees.add(new Employee("10019", "Rosario", "Cydney", "10/06/1996","Regular", "Account Rank and File", 133.93, 22500, 1500, 500, 500));
+        employees.add(new Employee("10020", "Bautista", "Mark", "02/12/1991", "Regular", "Account Rank and File", 138.39, 23250, 1500, 500, 500));
+        employees.add(new Employee("10021", "Lazaro", "Darlene", "11/25/1985", "Probationary", "Account Rank and File", 138.39, 23250, 1500, 500, 500));
+        employees.add(new Employee("10022", "Delos Santos", "Kolby", "02/26/1980","Probationary", "Account Rank and File", 142.86, 24000, 1500, 500, 500));
+        employees.add(new Employee("10023", "Santos", "Vella", "12/31/1983", "Probationary", "Account Rank and File", 133.93, 22500, 1500, 500, 500));
+        employees.add(new Employee("10024", "Del Rosario", "Tomas", "12/18/1978", "Probationary", "Account Rank and File", 133.93, 22500, 1500, 500, 500));
+        employees.add(new Employee("10025", "Tolentino", "Jacklyn", "05/19/1984", "Probationary", "Account Rank and File", 142.86, 24000, 1500, 500, 500));
+        employees.add(new Employee("10026", "Gutierrez", "Percival", "12/18/1970", "Probationary", "Account Rank and File",  147.32, 24750, 1500, 500, 500));
+        employees.add(new Employee("10027", "Manalaysay", "Garfield", "08/28/1986","Probationary", "Account Rank and File",  147.32, 24750, 1500, 500, 500));
+        employees.add(new Employee("10028", "Villegas", "Lizeth", "12/12/1981", "Probationary", "Account Rank and File",  142.86, 24000, 1500, 500, 500));
+        employees.add(new Employee("10029", "Ramos", "Carol", "08/20/1978", "Probationary", "Account Rank and File", 133.93, 22500, 1500, 500, 500));
+        employees.add(new Employee("10030", "Maceda", "Emelia", "04/14/1973","Probationary", "Account Rank and File",  133.93, 22500, 1500, 500, 500));
+        employees.add(new Employee("10031", "Aguilar", "Delia", "01/27/1989", "Probationary", "Account Rank and File", 133.93, 22500, 1500, 500, 500));
+        employees.add(new Employee("10032", "Castro", "John Rafael", "02/09/1992", "Regular", "Sales & Marketing", 313.51, 52670, 1500, 1000, 1000));
+        employees.add(new Employee("10033", "Martinez", "Carlos Ian", "11/16/1990", "Regular", "Supply Chain and Logistics", 313.51, 52670, 1500, 1000, 1000));
+        employees.add(new Employee("10034", "Santos", "Beatriz", "08/07/1990", "Regular", "Customer Service and Relations", 313.51, 52670, 1500, 1000, 1000));
         return employees;
     }
 
@@ -100,6 +100,7 @@ public class MotorPH {
             System.out.println("3. Back to main menu");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
+            System.out.println();
             scanner.nextLine(); // Consume newline
 
             switch (choice) {
@@ -109,9 +110,14 @@ public class MotorPH {
                     boolean found = false;
                     for (Employee emp : employees) {
                         if (emp.getEmployeeNumber().equals(empNumber)) {
-                            System.out.println("Employee Number: " + emp.getEmployeeNumber());
+                            
+                            System.out.println("----------------------------------------------------");
+                            System.out.println("--------------- EMPLOYEE DETAILS -------------------");
+                            System.out.println("Employee Number | Employee Name " + emp.getEmployeeNumber());
                             System.out.println("Employee Name: " + emp.firstName + " " + emp.lastName);
                             System.out.println("Birthdate: " + emp.birthDate);
+                            System.out.println("Status: " + emp.status);
+                            System.out.println("Position: " + emp.position);
                             System.out.println("--------------------------------------------------");
                             found = true;
                             break;
@@ -122,10 +128,14 @@ public class MotorPH {
                     }
                     break;
                 case 2:
+                    System.out.println("----------------------------------------------------");
+                    System.out.println("--------------- EMPLOYEES DETAILS -------------------");
                     for (Employee emp : employees) {
                         System.out.println("Employee Number: " + emp.getEmployeeNumber());
                         System.out.println("Employee Name: " + emp.firstName + " " + emp.lastName);
                         System.out.println("Birthdate: " + emp.birthDate);
+                        System.out.println("Status: " + emp.status);
+                        System.out.println("Position: " + emp.position);
                         System.out.println("--------------------------------------------------");
                     }
                     break;
@@ -163,10 +173,12 @@ public class MotorPH {
                                 if (weeksInMonth != null) {
                                     // Let the user choose specific weeks or all weeks
                                     Set<String> selectedWeeks = chooseWeeks(scanner, weeksInMonth, selectedMonth);
-                                    if (selectedWeeks != null) {
+                                    if (selectedWeeks != null) 
+                                         {
                                         // Display payroll for the selected weeks
+                                        System.out.println("----------------------------------------");
+                                        System.out.println("Employee Number: " + emp.employeeNumber);
                                         System.out.println("Employee Name: " + emp.firstName + " " + emp.lastName);
-                                        System.out.println("Birthdate: " + emp.birthDate);
                                         for (String weekKey : selectedWeeks) {
                                             emp.displayPayrollDetailsForWeek(weekKey);
                                         }
@@ -195,12 +207,12 @@ public class MotorPH {
                             if (selectedWeeks != null) {
                                 // Display payroll for all employees for the selected weeks
                                 for (Employee emp : employees) {
+                                    System.out.println("Employee Number: " + emp.employeeNumber);
                                     System.out.println("Employee Name: " + emp.firstName + " " + emp.lastName);
-                                    System.out.println("Birthdate: " + emp.birthDate);
                                     for (String weekKey : selectedWeeks) {
                                         emp.displayPayrollDetailsForWeek(weekKey);
                                     }
-                                    System.out.println("--------------------------------------------------");
+                                 
                                 }
                             }
                         } else {
@@ -246,7 +258,13 @@ public class MotorPH {
     // Choose specific weeks or all weeks in a month
     private static Set<String> chooseWeeks(Scanner scanner, Set<String> weeksInMonth, String selectedMonth) {
         List<String> weeks = new ArrayList<>(weeksInMonth);
-        Collections.sort(weeks); // Sort weeks chronologically
+        
+        
+        Collections.sort(weeks, (week1, week2) -> {
+        LocalDate startDate1 = getStartDateFromWeekKey(week1);
+        LocalDate startDate2 = getStartDateFromWeekKey(week2);
+        return startDate1.compareTo(startDate2);
+    });
 
         System.out.println("\nAvailable weeks in the selected month:");
         List<String> validWeeks = new ArrayList<>();
@@ -297,6 +315,17 @@ public class MotorPH {
 
         return selectedWeeks;
     }
+    // Helper method to get the start date from a week key
+    private static LocalDate getStartDateFromWeekKey(String weekKey) {
+    String[] parts = weekKey.split("-");
+    int year = Integer.parseInt(parts[0]);
+    int week = Integer.parseInt(parts[1]);
+
+    // Get the first day of the week (Monday) for the given year and week
+    return LocalDate.of(year, 1, 1)
+            .with(IsoFields.WEEK_OF_WEEK_BASED_YEAR, week)
+            .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+}
 
     // Get the date range for a week
     private static String getWeekDateRange(String weekKey) {
@@ -411,34 +440,37 @@ public class MotorPH {
 
     // Nested Employee class
     static class Employee {
-        String employeeNumber, lastName, firstName, birthDate;
+        String employeeNumber, lastName, firstName, birthDate, status, position;
         double hourlyRate, basicSalary, riceSubsidy, phoneAllowance, clothingAllowance;
         Map<String, Double> weeklyHours = new HashMap<>();
 
-        public Employee(String empNum, String lName, String fName, String birthDate, double hRate, double bSalary, double rice, double phone, double clothing) {
+        public Employee(String empNum, String lName, String fName, String birthDate, String status, String position, double hRate, double bSalary, double rice, double phone, double clothing) {
             employeeNumber = empNum;
             lastName = lName;
             firstName = fName;
             this.birthDate = birthDate;
+            this.status = status;
+            this.position = position;
             hourlyRate = hRate;
             basicSalary = bSalary;
             riceSubsidy = rice;
             phoneAllowance = phone;
             clothingAllowance = clothing;
         }
-
+   
         public String getEmployeeNumber() {
             return employeeNumber;
         }
 
         public void addHoursWorked(String week, double hours) {
             weeklyHours.put(week, weeklyHours.getOrDefault(week, 0.0) + hours);
-        }
+            }
 
         public double calculateGrossSalary(String weekKey) {
             double hoursWorked = weeklyHours.getOrDefault(weekKey, 0.0);
             return hoursWorked * hourlyRate + riceSubsidy + phoneAllowance + clothingAllowance;
         }
+        
 
         public double calculateSSS() {
             double monthlySalary = basicSalary;
@@ -488,7 +520,8 @@ public class MotorPH {
             else if (monthlySalary <= 24750) return 1102.50 / 4;
             else return 1125.00 / 4;
         }
-
+        
+        
         public double calculatePhilHealth() {
             double monthlySalary = basicSalary;
             if (monthlySalary <= 10000) return 300.00 / 4; // Weekly PhilHealth
@@ -532,7 +565,7 @@ public class MotorPH {
                 System.out.println("PhilHealth Deduction (Weekly): PHP " + calculatePhilHealth());
                 System.out.println("Pag-IBIG Deduction (Weekly): PHP " + calculatePagIbig());
                 System.out.println("Withholding Tax (Weekly): PHP " + calculateWithholdingTax());
-                System.out.println("Net Weekly Salary: PHP " + calculateNetSalary(weekKey));
+                System.out.println("Net Weekly Salary: PHP " + calculateNetSalary (weekKey));
                 System.out.println("--------------------------------------------------");
             }
         }
