@@ -453,9 +453,9 @@ public class MotorPH {
             this.position = position;
             hourlyRate = hRate;
             basicSalary = bSalary;
-            riceSubsidy = rice;
-            phoneAllowance = phone;
-            clothingAllowance = clothing;
+            riceSubsidy = rice/4; // Convert to weekly
+            phoneAllowance = phone/4; //Convert to weekly
+            clothingAllowance = clothing/4; //Convert to weekly
         }
    
         public String getEmployeeNumber() {
