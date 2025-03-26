@@ -414,6 +414,16 @@ public class MotorPH {
                                 break;
                             }
                         }
+                        
+                        // Gets the weekly logins and logouts
+                        DayOfWeek day = logDate.getDayOfWeek(); // Get the day of the week
+
+                        for (Employee emp : employees) {
+                            if (emp.getEmployeeNumber().equals(employeeNumber)) {
+                                emp.addAttendance(weekKey, day, logIn, logOut);
+                                break;
+                            }
+                        }
                     } catch (DateTimeParseException e) {
                         System.out.println("Error parsing date or time for employee: " + employeeNumber + " on " + dateStr);
                         continue;
@@ -456,6 +466,14 @@ public class MotorPH {
             riceSubsidy = rice/4; // Convert to weekly
             phoneAllowance = phone/4; //Convert to weekly
             clothingAllowance = clothing/4; //Convert to weekly
+        }
+        
+        private Map<String, Map<DayOfWeek, List<LocalTime>>> attendanceRecords = new HashMap<>();
+
+        public void addAttendance(String weekKey, DayOfWeek day, LocalTime logIn, LocalTime logOut) {
+            attendanceRecords
+                .computeIfAbsent(weekKey, k -> new HashMap<>())  // Create week entry if missing
+                .put(day, Arrays.asList(logIn, logOut)); // Store log-in & log-out for the day
         }
    
         public String getEmployeeNumber() {
@@ -550,14 +568,100 @@ public class MotorPH {
             else if (taxableIncome < 666667) return (40833.33 + (taxableIncome - 166667) * 0.32) / 4;
             else return (200833.33 + (taxableIncome - 666667) * 0.35) / 4;
         }
+        
+        // Determine late minutes
+        public double getLateMinutes(String weekKey) {
+            if (!attendanceRecords.containsKey(weekKey)) return 0; // No records
+
+            LocalTime graceTime = LocalTime.of(8, 10); // Grace period: 8:10 AM
+            double totalLateMinutes = 0;
+
+            for (Map.Entry<DayOfWeek, List<LocalTime>> entry : attendanceRecords.get(weekKey).entrySet()) {
+                LocalTime logIn = entry.getValue().get(0); // Get log-in time for the day
+
+                if (logIn.isAfter(graceTime)) {
+                    totalLateMinutes += ChronoUnit.MINUTES.between(graceTime, logIn);
+                }
+            }
+
+            return totalLateMinutes;
+        }
+        
+        // Calculate late deduction (in pesos)
+        public double calculateLateDeduction(String weekKey) {
+            double lateMinutes = getLateMinutes(weekKey);
+            return (lateMinutes / 60.0) * hourlyRate; // Deduction is based on hourly rate
+        }
+        
+        /*
+        // Calculate late deduction weekly
+        public double weeklyLateDeduction () {
+            return calculateLateDeduction(weekKey) * 5;
+        } 
+            */    
+           
+        // Determine overtime hours
+        public double getOvertimeHours(String weekKey) {
+            if (!attendanceRecords.containsKey(weekKey)) return 0; // No records
+
+            double totalOvertimeHours = 0;
+            
+            for (Map.Entry<DayOfWeek, List<LocalTime>> entry : attendanceRecords.get(weekKey).entrySet()) {
+                LocalTime logIn = entry.getValue().get(0);
+                LocalTime logOut = entry.getValue().get(1);
+
+                long workedMinutes = ChronoUnit.MINUTES.between(logIn, logOut);
+                double workedHours = workedMinutes / 60.0;
+
+                if (workedHours > 8) {
+                    totalOvertimeHours += workedHours - 8;
+                }
+            }
+
+            return totalOvertimeHours;
+        }
+
+                
+        // Calculate overtime pay
+        public double calculateOvertimePay(String weekKey) {
+            
+            double overtimeHours = getOvertimeHours(weekKey);
+            return overtimeHours * hourlyRate * 1.25; // Overtime rate: 125% of hourly rate
+        }
 
         public double calculateNetSalary(String weekKey) {
             return calculateGrossSalary(weekKey) - (calculateSSS() + calculatePhilHealth() + calculatePagIbig() + calculateWithholdingTax());
         }
 
+        // Deduct late penalties from weekly salary
+        public double lateDeductionInWeeklySalary(String weekKey) {
+            return calculateNetSalary(weekKey) - calculateLateDeduction(weekKey);
+        }
+
+        
+        // Add overtime pay to weekly salary
+        public double addOvertimePay(String weekKey) {
+            return calculateNetSalary(weekKey) + calculateOvertimePay(weekKey);
+        }
+        
+            // updated payroll details (added calls/parameters to call late and overtime methods)
         public void displayPayrollDetailsForWeek(String weekKey) {
+            if (!attendanceRecords.containsKey(weekKey)) {
+                System.out.println("No records found for this week.");
+                return;
+            }
+
+            
             if (weeklyHours.containsKey(weekKey)) {
                 String dateRange = getWeekDateRange(weekKey);
+                double lateMinutes = getLateMinutes (weekKey);
+                double lateDeduction = calculateLateDeduction (weekKey);
+                double overtimeHours = getOvertimeHours (weekKey);
+                double overtimePay = calculateOvertimePay (weekKey);
+                double netSalaryBeforeLate = calculateNetSalary (weekKey);
+                double netSalaryAfterLate = netSalaryBeforeLate - lateDeduction;
+                double finalNetSalary = netSalaryAfterLate + overtimePay;
+                
                 System.out.println("Week: " + dateRange);
                 System.out.println("Hours Worked: " + weeklyHours.get(weekKey));
                 System.out.println("Gross Weekly Salary: PHP " + calculateGrossSalary(weekKey));
@@ -565,7 +669,14 @@ public class MotorPH {
                 System.out.println("PhilHealth Deduction (Weekly): PHP " + calculatePhilHealth());
                 System.out.println("Pag-IBIG Deduction (Weekly): PHP " + calculatePagIbig());
                 System.out.println("Withholding Tax (Weekly): PHP " + calculateWithholdingTax());
-                System.out.println("Net Weekly Salary: PHP " + calculateNetSalary (weekKey));
+               // System.out.println("Net Weekly Salary: PHP " + calculateNetSalary (weekKey));
+                System.out.println("Net Weekly Salary (Before Late Deduction & Overtime: PHP " + netSalaryBeforeLate);
+                System.out.println("Late Minutes: " + lateMinutes + "mins");
+                System.out.println("Late Deduction: PHP " + lateDeduction);
+                System.out.println("Net Weekly Salary (After Late Deduction): PHP " + netSalaryAfterLate);
+                System.out.println("Overtime Hours: " + overtimeHours + "hrs");
+                System.out.println("Overtime Pay: PHP " + overtimePay);
+                System.out.println("Final Net Weekly Salary: PHP" + finalNetSalary);
                 System.out.println("--------------------------------------------------");
             }
         }
