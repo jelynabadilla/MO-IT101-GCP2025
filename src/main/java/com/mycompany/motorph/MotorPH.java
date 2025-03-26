@@ -587,18 +587,11 @@ public class MotorPH {
             return totalLateMinutes;
         }
         
-        // Calculate late deduction (in pesos)
+        // Calculate late deduction 
         public double calculateLateDeduction(String weekKey) {
             double lateMinutes = getLateMinutes(weekKey);
             return (lateMinutes / 60.0) * hourlyRate; // Deduction is based on hourly rate
-        }
-        
-        /*
-        // Calculate late deduction weekly
-        public double weeklyLateDeduction () {
-            return calculateLateDeduction(weekKey) * 5;
-        } 
-            */    
+        }   
            
         // Determine overtime hours
         public double getOvertimeHours(String weekKey) {
@@ -644,7 +637,7 @@ public class MotorPH {
             return calculateNetSalary(weekKey) + calculateOvertimePay(weekKey);
         }
         
-            // updated payroll details (added calls/parameters to call late and overtime methods)
+            // updated payroll details 
         public void displayPayrollDetailsForWeek(String weekKey) {
             if (!attendanceRecords.containsKey(weekKey)) {
                 System.out.println("No records found for this week.");
@@ -676,7 +669,7 @@ public class MotorPH {
                 System.out.println("Net Weekly Salary (After Late Deduction): PHP " + netSalaryAfterLate);
                 System.out.println("Overtime Hours: " + overtimeHours + "hrs");
                 System.out.println("Overtime Pay: PHP " + overtimePay);
-                System.out.println("Final Net Weekly Salary: PHP" + finalNetSalary);
+                System.out.println("Final Net Weekly Salary: PHP " + finalNetSalary);
                 System.out.println("--------------------------------------------------");
             }
         }
