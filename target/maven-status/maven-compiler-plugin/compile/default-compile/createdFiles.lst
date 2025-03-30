@@ -1,2 +1,5 @@
-com\mycompany\motorph\MotorPH$Employee.class
+com\mycompany\motorph\Attendance.class
 com\mycompany\motorph\MotorPH.class
+com\mycompany\motorph\FileHandler.class
+com\mycompany\motorph\PayrollCalculator.class
+com\mycompany\motorph\Employee.class
