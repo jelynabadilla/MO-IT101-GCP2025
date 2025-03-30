@@ -142,10 +142,6 @@ public class MotorPH {
             employee.getBirthday().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")) : "N/A");
         System.out.printf("%-20s: %s\n", "Address", employee.getAddress());
         System.out.printf("%-20s: %s\n", "Phone Number", employee.getPhoneNumber());
-        System.out.printf("%-20s: %s\n", "SSS Number", employee.getSssNumber());
-        System.out.printf("%-20s: %s\n", "PhilHealth Number", employee.getPhilhealthNumber());
-        System.out.printf("%-20s: %s\n", "TIN Number", employee.getTinNumber());
-        System.out.printf("%-20s: %s\n", "Pag-IBIG Number", employee.getPagibigNumber());
         System.out.printf("%-20s: %s\n", "Status", employee.getStatus());
         System.out.printf("%-20s: %s\n", "Position", employee.getPosition());
         System.out.printf("%-20s: %s\n", "Supervisor", employee.getSupervisor());
