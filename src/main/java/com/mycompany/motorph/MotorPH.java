@@ -1,47 +1,50 @@
 package com.mycompany.motorph;
 
-import java.io.*;
-import java.time.*;
-import java.time.format.*;
-import java.time.temporal.*;
-import java.util.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class MotorPH {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        List<Employee> employees = initializeEmployees();
+        FileHandler fileHandler = new FileHandler();
+        PayrollCalculator payroll = new PayrollCalculator(fileHandler);
 
-        // Prompt for attendance record file path
-        System.out.print("Enter CSV file path for attendance record: ");
-        String csvFilePath = scanner.nextLine().trim();
+        printSectionHeader("MOTORPH PAYROLL SYSTEM");
 
-        if (csvFilePath.isEmpty()) {
-            csvFilePath = "attendance.csv"; // Default file path
-        }
-
-        // Read attendance records
-        Map<String, Set<String>> monthToWeeksMap = readEmployeeAttendance(csvFilePath, employees);
-        System.out.println("Attendance records updated.");
-
-        // Main menu
         while (true) {
-            System.out.println("\nChoose an option:");
-            System.out.println("1. View Employee Details");
-            System.out.println("2. View Payroll");
-            System.out.println("3. Exit");
+            System.out.println("MAIN MENU");
+            System.out.println("1. Employee Management");
+            System.out.println("2. Attendance Management");
+            System.out.println("3. Payroll Calculation");
+            System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+
+            String choice = scanner.nextLine();
 
             switch (choice) {
-                case 1:
-                    viewEmployeeDetails(scanner, employees);
+                case "1":
+                    employeeMenu(scanner, fileHandler);
                     break;
-                case 2:
-                    viewPayroll(scanner, employees, monthToWeeksMap);
+                case "2":
+                    attendanceMenu(scanner, fileHandler);
                     break;
-                case 3:
-                    System.out.println("Exiting...");
+                case "3":
+                    payrollMenu(scanner, payroll, fileHandler);
+                    break;
+                case "0":
+                    System.out.println("Exiting system. Goodbye!");
                     scanner.close();
                     return;
                 default:
@@ -50,549 +53,546 @@ public class MotorPH {
         }
     }
 
-    // Initialize employee details
-    private static List<Employee> initializeEmployees() {
-        List<Employee> employees = new ArrayList<>();
-        // Add all employees with their details
-        employees.add(new Employee("10001", "Garcia", "Manuel III", "10/11/1983", "Regular", "Chief Executive Officer", 535.71, 90000, 1500, 2000, 1000));
-        employees.add(new Employee("10002", "Lim", "Antonio", "06/19/1988","Regular", "Chief Operating Officer", 357.14, 60000, 1500, 2000, 1000));
-        employees.add(new Employee("10003", "Aquino", "Bianca Sofia", "08/04/1989", "Regular", "Chief Finance Officer", 357.14, 60000, 1500, 2000, 1000));
-        employees.add(new Employee("10004", "Reyes", "Isabella", "06/16/1994", "Regular", "Chief Marketing Officer", 357.14, 60000, 1500, 2000, 1000));
-        employees.add(new Employee("10005", "Hernandez", "Eduard", "09/23/1989", "Regular", "IT Operations and Systems", 313.51, 52670, 1500, 1000, 1000));
-        employees.add(new Employee("10006", "Villanueva", "Andrea Mae", "02/14/1988","Regular", "HR Manager", 313.51, 52670, 1500, 1000, 1000));
-        employees.add(new Employee("10007", "San Jose", "Brad", "03/15/1996", "Regular", "HR Team Leader", 255.80, 42975, 1500, 800, 800));
-        employees.add(new Employee("10008", "Romualdez", "Alice", "05/14/1992", "Regular", "HR Rank and File", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10009", "Atienza", "Rosie", "09/24/1948", "Regular", "HR Rank and File", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10010", "Alvaro", "Roderick", "03/30/1988", "Regular", "Accounting Head", 313.51, 52670, 1500, 1000, 1000));
-        employees.add(new Employee("10011", "Salcedo", "Anthony", "09/14/1993", "Regular", "Payroll Manager", 302.53, 50825, 1500, 1000, 1000));
-        employees.add(new Employee("10012", "Lopez", "Josie", "01/14/1987", "Regular", "Payroll Team Leader", 229.02, 38475, 1500, 800, 800));
-        employees.add(new Employee("10013", "Farala", "Martha", "01/11/1942", "Regular", "Payroll Rank and File", 142.86, 24000, 1500, 500, 500));
-        employees.add(new Employee("10014", "Martinez", "Leila", "07/11/1970", "Regular", "Payroll Rank and File", 142.86, 24000, 1500, 500, 500));
-        employees.add(new Employee("10015", "Romualdez", "Fredrick", "03/10/1985", "Regular", "Account Manager",  318.45, 53500, 1500, 1000, 1000));
-        employees.add(new Employee("10016", "Mata", "Christian", "10/21/1987", "Regular", "Account Team Leader",  255.80, 42975, 1500, 800, 800));
-        employees.add(new Employee("10017", "De Leon", "Selena", "02/20/1975", "Regular", "Account Team Leader", 249.11, 41850, 1500, 800, 800));
-        employees.add(new Employee("10018", "San Jose", "Allison", "06/24/1986", "Regular", "Account Rank and File", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10019", "Rosario", "Cydney", "10/06/1996","Regular", "Account Rank and File", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10020", "Bautista", "Mark", "02/12/1991", "Regular", "Account Rank and File", 138.39, 23250, 1500, 500, 500));
-        employees.add(new Employee("10021", "Lazaro", "Darlene", "11/25/1985", "Probationary", "Account Rank and File", 138.39, 23250, 1500, 500, 500));
-        employees.add(new Employee("10022", "Delos Santos", "Kolby", "02/26/1980","Probationary", "Account Rank and File", 142.86, 24000, 1500, 500, 500));
-        employees.add(new Employee("10023", "Santos", "Vella", "12/31/1983", "Probationary", "Account Rank and File", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10024", "Del Rosario", "Tomas", "12/18/1978", "Probationary", "Account Rank and File", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10025", "Tolentino", "Jacklyn", "05/19/1984", "Probationary", "Account Rank and File", 142.86, 24000, 1500, 500, 500));
-        employees.add(new Employee("10026", "Gutierrez", "Percival", "12/18/1970", "Probationary", "Account Rank and File",  147.32, 24750, 1500, 500, 500));
-        employees.add(new Employee("10027", "Manalaysay", "Garfield", "08/28/1986","Probationary", "Account Rank and File",  147.32, 24750, 1500, 500, 500));
-        employees.add(new Employee("10028", "Villegas", "Lizeth", "12/12/1981", "Probationary", "Account Rank and File",  142.86, 24000, 1500, 500, 500));
-        employees.add(new Employee("10029", "Ramos", "Carol", "08/20/1978", "Probationary", "Account Rank and File", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10030", "Maceda", "Emelia", "04/14/1973","Probationary", "Account Rank and File",  133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10031", "Aguilar", "Delia", "01/27/1989", "Probationary", "Account Rank and File", 133.93, 22500, 1500, 500, 500));
-        employees.add(new Employee("10032", "Castro", "John Rafael", "02/09/1992", "Regular", "Sales & Marketing", 313.51, 52670, 1500, 1000, 1000));
-        employees.add(new Employee("10033", "Martinez", "Carlos Ian", "11/16/1990", "Regular", "Supply Chain and Logistics", 313.51, 52670, 1500, 1000, 1000));
-        employees.add(new Employee("10034", "Santos", "Beatriz", "08/07/1990", "Regular", "Customer Service and Relations", 313.51, 52670, 1500, 1000, 1000));
-        return employees;
+    private static void printSectionHeader(String title) {
+        System.out.println("\n----------------------------------------------------");
+        System.out.println("---------------- " + title + " ----------------");
+        System.out.println("----------------------------------------------------");
     }
 
-    // View employee details
-    private static void viewEmployeeDetails(Scanner scanner, List<Employee> employees) {
+    private static void printSectionFooter() {
+        System.out.println("----------------------------------------------------");
+    }
+
+    private static void employeeMenu(Scanner scanner, FileHandler fileHandler) {
         while (true) {
-            System.out.println("\nChoose an option:");
-            System.out.println("1. View details for a specific employee");
-            System.out.println("2. View details for all employees");
-            System.out.println("3. Back to main menu");
+            printSectionHeader("EMPLOYEE MANAGEMENT");
+            System.out.println("1. View All Employees");
+            System.out.println("2. View Specific Employee");
+            System.out.println("3. Add New Employee");
+            System.out.println("4. Update Employee");
+            System.out.println("5. Delete Employee");
+            System.out.println("0. Back to Main Menu");
             System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
-            System.out.println();
-            scanner.nextLine(); // Consume newline
+
+            String choice = scanner.nextLine();
 
             switch (choice) {
-                case 1:
-                    System.out.print("Enter employee number: ");
-                    String empNumber = scanner.nextLine().trim();
-                    boolean found = false;
-                    for (Employee emp : employees) {
-                        if (emp.getEmployeeNumber().equals(empNumber)) {
-                            
-                            System.out.println("----------------------------------------------------");
-                            System.out.println("--------------- EMPLOYEE DETAILS -------------------");
-                            System.out.println("Employee Number | Employee Name " + emp.getEmployeeNumber());
-                            System.out.println("Employee Name: " + emp.firstName + " " + emp.lastName);
-                            System.out.println("Birthdate: " + emp.birthDate);
-                            System.out.println("Status: " + emp.status);
-                            System.out.println("Position: " + emp.position);
-                            System.out.println("--------------------------------------------------");
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        System.out.println("Employee not found.");
-                    }
+                case "1":
+                    viewAllEmployees(fileHandler);
                     break;
-                case 2:
-                    System.out.println("----------------------------------------------------");
-                    System.out.println("--------------- EMPLOYEES DETAILS -------------------");
-                    for (Employee emp : employees) {
-                        System.out.println("Employee Number: " + emp.getEmployeeNumber());
-                        System.out.println("Employee Name: " + emp.firstName + " " + emp.lastName);
-                        System.out.println("Birthdate: " + emp.birthDate);
-                        System.out.println("Status: " + emp.status);
-                        System.out.println("Position: " + emp.position);
-                        System.out.println("--------------------------------------------------");
-                    }
+                case "2":
+                    viewSpecificEmployee(scanner, fileHandler);
                     break;
-                case 3:
-                    return; // Go back to the main menu
+                case "3":
+                    addEmployee(scanner, fileHandler);
+                    break;
+                case "4":
+                    updateEmployee(scanner, fileHandler);
+                    break;
+                case "5":
+                    deleteEmployee(scanner, fileHandler);
+                    break;
+                case "0":
+                    return;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
         }
     }
 
-    // View payroll details
-    private static void viewPayroll(Scanner scanner, List<Employee> employees, Map<String, Set<String>> monthToWeeksMap) {
+    private static void viewAllEmployees(FileHandler fileHandler) {
+        List<Employee> employees = fileHandler.readEmployees();
+        if (employees.isEmpty()) {
+            printSectionHeader("EMPLOYEE LIST");
+            System.out.println("No employees found.");
+            printSectionFooter();
+            return;
+        }
+
+        printSectionHeader("EMPLOYEE LIST");
+        System.out.printf("%-8s %-20s %-20s %-30s %s\n", 
+            "ID", "Last Name", "First Name", "Position", "Basic Salary");
+        for (Employee emp : employees) {
+            System.out.printf("%-8s %-20s %-20s %-30s PHP %,.2f\n",
+                emp.getEmployeeId(),
+                emp.getLastName(),
+                emp.getFirstName(),
+                emp.getPosition(),
+                emp.getBasicSalary());
+        }
+        printSectionFooter();
+    }
+
+    private static void viewSpecificEmployee(Scanner scanner, FileHandler fileHandler) {
+        printSectionHeader("VIEW EMPLOYEE DETAILS");
+        System.out.print("Enter Employee ID: ");
+        String id = scanner.nextLine();
+        
+        Employee employee = fileHandler.findEmployee(id);
+        if (employee == null) {
+            System.out.println("Employee not found!");
+            printSectionFooter();
+            return;
+        }
+
+        System.out.println("\nEmployee Details:");
+        System.out.printf("%-20s: %s\n", "Employee ID", employee.getEmployeeId());
+        System.out.printf("%-20s: %s, %s\n", "Name", employee.getLastName(), employee.getFirstName());
+        System.out.printf("%-20s: %s\n", "Birthday", employee.getBirthday() != null ? 
+            employee.getBirthday().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")) : "N/A");
+        System.out.printf("%-20s: %s\n", "Address", employee.getAddress());
+        System.out.printf("%-20s: %s\n", "Phone Number", employee.getPhoneNumber());
+        System.out.printf("%-20s: %s\n", "SSS Number", employee.getSssNumber());
+        System.out.printf("%-20s: %s\n", "PhilHealth Number", employee.getPhilhealthNumber());
+        System.out.printf("%-20s: %s\n", "TIN Number", employee.getTinNumber());
+        System.out.printf("%-20s: %s\n", "Pag-IBIG Number", employee.getPagibigNumber());
+        System.out.printf("%-20s: %s\n", "Status", employee.getStatus());
+        System.out.printf("%-20s: %s\n", "Position", employee.getPosition());
+        System.out.printf("%-20s: %s\n", "Supervisor", employee.getSupervisor());
+        System.out.printf("%-20s: PHP %,.2f\n", "Basic Salary", employee.getBasicSalary());
+        System.out.printf("%-20s: PHP %,.2f\n", "Rice Subsidy", employee.getRiceSubsidy());
+        System.out.printf("%-20s: PHP %,.2f\n", "Phone Allowance", employee.getPhoneAllowance());
+        System.out.printf("%-20s: PHP %,.2f\n", "Clothing Allowance", employee.getClothingAllowance());
+        System.out.printf("%-20s: PHP %,.2f\n", "Gross Rate", employee.getGrossRate());
+        System.out.printf("%-20s: PHP %,.2f\n", "Hourly Rate", employee.getHourlyRate());
+        printSectionFooter();
+    }
+
+    private static void addEmployee(Scanner scanner, FileHandler fileHandler) {
+        printSectionHeader("ADD NEW EMPLOYEE");
+        Employee employee = new Employee();
+        Map<String, String> data = new HashMap<>();
+
+        System.out.print("Employee ID: ");
+        data.put("EmployeeID", scanner.nextLine());
+        System.out.print("Last Name: ");
+        data.put("LastName", scanner.nextLine());
+        System.out.print("First Name: ");
+        data.put("FirstName", scanner.nextLine());
+        System.out.print("Birthday (MM/DD/YYYY): ");
+        data.put("Birthday", scanner.nextLine());
+        System.out.print("Address: ");
+        data.put("Address", scanner.nextLine());
+        System.out.print("Phone Number: ");
+        data.put("PhoneNumber", scanner.nextLine());
+        System.out.print("SSS Number: ");
+        data.put("SSS", scanner.nextLine());
+        System.out.print("PhilHealth Number: ");
+        data.put("Philhealth", scanner.nextLine());
+        System.out.print("TIN Number: ");
+        data.put("TIN", scanner.nextLine());
+        System.out.print("Pag-IBIG Number: ");
+        data.put("Pagibig", scanner.nextLine());
+        System.out.print("Status: ");
+        data.put("Status", scanner.nextLine());
+        System.out.print("Position: ");
+        data.put("Position", scanner.nextLine());
+        System.out.print("Supervisor: ");
+        data.put("Supervisor", scanner.nextLine());
+        System.out.print("Basic Salary: ");
+        data.put("BasicSalary", scanner.nextLine());
+        System.out.print("Rice Subsidy: ");
+        data.put("RiceSubsidy", scanner.nextLine());
+        System.out.print("Phone Allowance: ");
+        data.put("PhoneAllowance", scanner.nextLine());
+        System.out.print("Clothing Allowance: ");
+        data.put("ClothingAllowance", scanner.nextLine());
+        System.out.print("Gross Semi-monthly Rate: ");
+        data.put("GrossRate", scanner.nextLine());
+        System.out.print("Hourly Rate: ");
+        data.put("HourlyRate", scanner.nextLine());
+
+        employee = new Employee(data);
+        fileHandler.saveEmployee(employee);
+        System.out.println("\nEmployee added successfully!");
+        printSectionFooter();
+    }
+
+    private static void updateEmployee(Scanner scanner, FileHandler fileHandler) {
+        printSectionHeader("UPDATE EMPLOYEE");
+        System.out.print("Enter Employee ID to update: ");
+        String id = scanner.nextLine();
+        Employee employee = fileHandler.findEmployee(id);
+
+        if (employee == null) {
+            System.out.println("Employee not found!");
+            printSectionFooter();
+            return;
+        }
+
+        System.out.println("\nCurrent Employee Details:");
+        System.out.println("1. Last Name: " + employee.getLastName());
+        System.out.println("2. First Name: " + employee.getFirstName());
+        System.out.println("3. Birthday: " + (employee.getBirthday() != null ? 
+             employee.getBirthday().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")) : "N/A"));
+        System.out.println("4. Address: " + employee.getAddress());
+        System.out.println("5. Phone Number: " + employee.getPhoneNumber());
+        System.out.println("6. Basic Salary: PHP " + String.format("%,.2f", employee.getBasicSalary()));
+        System.out.println("0. Save Changes");
+
         while (true) {
-            System.out.println("\nChoose an option:");
-            System.out.println("1. View payroll for a specific employee");
-            System.out.println("2. View payroll for all employees");
-            System.out.println("3. Back to main menu");
-            System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            System.out.print("\nEnter field number to update (0 to save): ");
+            String choice = scanner.nextLine();
+
+            if (choice.equals("0")) {
+                fileHandler.saveEmployee(employee);
+                System.out.println("\nEmployee updated successfully!");
+                printSectionFooter();
+                break;
+            }
 
             switch (choice) {
-                case 1:
-                    System.out.print("Enter employee number: ");
-                    String empNumber = scanner.nextLine().trim();
-                    boolean found = false;
-                    for (Employee emp : employees) {
-                        if (emp.getEmployeeNumber().equals(empNumber)) {
-                            // Let the user choose a month
-                            String selectedMonth = chooseMonth(scanner, monthToWeeksMap);
-                            if (selectedMonth != null) {
-                                // Get the weeks for the selected month
-                                Set<String> weeksInMonth = monthToWeeksMap.get(selectedMonth);
-                                if (weeksInMonth != null) {
-                                    // Let the user choose specific weeks or all weeks
-                                    Set<String> selectedWeeks = chooseWeeks(scanner, weeksInMonth, selectedMonth);
-                                    if (selectedWeeks != null) 
-                                         {
-                                        // Display payroll for the selected weeks
-                                        System.out.println("----------------------------------------");
-                                        System.out.println("Employee Number: " + emp.employeeNumber);
-                                        System.out.println("Employee Name: " + emp.firstName + " " + emp.lastName);
-                                        for (String weekKey : selectedWeeks) {
-                                            emp.displayPayrollDetailsForWeek(weekKey);
-                                        }
-                                    }
-                                } else {
-                                    System.out.println("No weeks found for the selected month.");
-                                }
-                            }
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        System.out.println("Employee not found.");
-                    }
+                case "1":
+                    System.out.print("Enter new Last Name: ");
+                    employee.setLastName(scanner.nextLine());
                     break;
-                case 2:
-                    // Let the user choose a month
-                    String selectedMonth = chooseMonth(scanner, monthToWeeksMap);
-                    if (selectedMonth != null) {
-                        // Get the weeks for the selected month
-                        Set<String> weeksInMonth = monthToWeeksMap.get(selectedMonth);
-                        if (weeksInMonth != null) {
-                            // Let the user choose specific weeks or all weeks
-                            Set<String> selectedWeeks = chooseWeeks(scanner, weeksInMonth, selectedMonth);
-                            if (selectedWeeks != null) {
-                                // Display payroll for all employees for the selected weeks
-                                for (Employee emp : employees) {
-                                    System.out.println("Employee Number: " + emp.employeeNumber);
-                                    System.out.println("Employee Name: " + emp.firstName + " " + emp.lastName);
-                                    for (String weekKey : selectedWeeks) {
-                                        emp.displayPayrollDetailsForWeek(weekKey);
-                                    }
-                                 
-                                }
-                            }
-                        } else {
-                            System.out.println("No weeks found for the selected month.");
-                        }
-                    }
+                case "2":
+                    System.out.print("Enter new First Name: ");
+                    employee.setFirstName(scanner.nextLine());
                     break;
-                case 3:
-                    return; // Go back to the main menu
+                case "3":
+                    System.out.print("Enter new Birthday (MM/DD/YYYY): ");
+                    employee.setBirthday(scanner.nextLine());
+                    break;
+                case "4":
+                    System.out.print("Enter new Address: ");
+                    employee.setAddress(scanner.nextLine());
+                    break;
+                case "5":
+                    System.out.print("Enter new Phone Number: ");
+                    employee.setPhoneNumber(scanner.nextLine());
+                    break;
+                case "6":
+                    System.out.print("Enter new Basic Salary: ");
+                    employee.setBasicSalary(Double.parseDouble(scanner.nextLine()));
+                    break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
         }
     }
 
-    // Choose a month from the available months
-    private static String chooseMonth(Scanner scanner, Map<String, Set<String>> monthToWeeksMap) {
-        System.out.println("\nAvailable months in the attendance records:");
-        List<String> months = new ArrayList<>(monthToWeeksMap.keySet());
-        Collections.sort(months); // Sort months chronologically
+    private static void deleteEmployee(Scanner scanner, FileHandler fileHandler) {
+        printSectionHeader("DELETE EMPLOYEE");
+        System.out.print("Enter Employee ID to delete: ");
+        String id = scanner.nextLine();
 
-        if (months.isEmpty()) {
-            System.out.println("No months found in the attendance records.");
-            return null;
+        if (fileHandler.deleteEmployee(id)) {
+            System.out.println("\nEmployee deleted successfully!");
+        } else {
+            System.out.println("\nEmployee not found!");
         }
-
-        for (int i = 0; i < months.size(); i++) {
-            System.out.println((i + 1) + ". " + months.get(i));
-        }
-
-        System.out.print("Enter the number of the month you want to view: ");
-        int monthChoice = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-
-        if (monthChoice < 1 || monthChoice > months.size()) {
-            System.out.println("Invalid choice. Please try again.");
-            return null;
-        }
-
-        return months.get(monthChoice - 1);
+        printSectionFooter();
     }
 
-    // Choose specific weeks or all weeks in a month
-    private static Set<String> chooseWeeks(Scanner scanner, Set<String> weeksInMonth, String selectedMonth) {
-        List<String> weeks = new ArrayList<>(weeksInMonth);
-        
-        
-        Collections.sort(weeks, (week1, week2) -> {
-        LocalDate startDate1 = getStartDateFromWeekKey(week1);
-        LocalDate startDate2 = getStartDateFromWeekKey(week2);
-        return startDate1.compareTo(startDate2);
-    });
+    private static void attendanceMenu(Scanner scanner, FileHandler fileHandler) {
+        while (true) {
+            printSectionHeader("ATTENDANCE MANAGEMENT");
+            System.out.println("1. View Employee Attendance Records");
+            System.out.println("0. Back to Main Menu");
+            System.out.print("Enter your choice: ");
 
-        System.out.println("\nAvailable weeks in the selected month:");
-        List<String> validWeeks = new ArrayList<>();
+            String choice = scanner.nextLine();
 
-        for (int i = 0; i < weeks.size(); i++) {
-            String weekKey = weeks.get(i);
-            String dateRange = getWeekDateRange(weekKey); // Get the date range for the week
-
-            // Check if the week falls within the selected month
-            String[] parts = dateRange.split(" to ");
-            String startDate = parts[0];
-            String endDate = parts[1];
-
-            // Extract the month from the start and end dates
-            String startMonth = startDate.split("/")[0];
-            String endMonth = endDate.split("/")[0];
-
-            // Only include the week if it falls within the selected month
-            if (startMonth.equals(selectedMonth.split("/")[0]) || endMonth.equals(selectedMonth.split("/")[0])) {
-                System.out.println((validWeeks.size() + 1) + ". " + dateRange);
-                validWeeks.add(weekKey);
+            switch (choice) {
+                case "1":
+                    viewEmployeeAttendance(scanner, fileHandler);
+                    break;
+                case "0":
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
             }
-        }
-
-        System.out.println((validWeeks.size() + 1) + ". All weeks");
-        System.out.print("Enter the number of the week(s) you want to view (comma-separated for multiple): ");
-        String input = scanner.nextLine().trim();
-        String[] choices = input.split(",");
-
-        Set<String> selectedWeeks = new HashSet<>();
-        for (String choice : choices) {
-            try {
-                int weekChoice = Integer.parseInt(choice.trim());
-                if (weekChoice == validWeeks.size() + 1) {
-                    // User selected "All weeks"
-                    return new HashSet<>(validWeeks);
-                } else if (weekChoice >= 1 && weekChoice <= validWeeks.size()) {
-                    selectedWeeks.add(validWeeks.get(weekChoice - 1));
-                } else {
-                    System.out.println("Invalid choice: " + weekChoice);
-                    return null;
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input: " + choice);
-                return null;
-            }
-        }
-
-        return selectedWeeks;
-    }
-    // Helper method to get the start date from a week key
-    private static LocalDate getStartDateFromWeekKey(String weekKey) {
-    String[] parts = weekKey.split("-");
-    int year = Integer.parseInt(parts[0]);
-    int week = Integer.parseInt(parts[1]);
-
-    // Get the first day of the week (Monday) for the given year and week
-    return LocalDate.of(year, 1, 1)
-            .with(IsoFields.WEEK_OF_WEEK_BASED_YEAR, week)
-            .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-}
-
-    // Get the date range for a week
-    private static String getWeekDateRange(String weekKey) {
-        try {
-            // Split the weekKey into year and week number
-            String[] parts = weekKey.split("-");
-            int year = Integer.parseInt(parts[0]);
-            int week = Integer.parseInt(parts[1]);
-
-            // Get the first day of the week (Monday) for the given year and week
-            LocalDate startOfWeek = LocalDate.of(year, 1, 1) // Start from January 1st of the year
-                    .with(IsoFields.WEEK_OF_WEEK_BASED_YEAR, week) // Move to the correct week
-                    .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)); // Adjust to Monday
-
-            // Calculate the end of the week (Sunday)
-            LocalDate endOfWeek = startOfWeek.plusDays(6);
-
-            // Format the date range
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            return startOfWeek.format(dateFormatter) + " to " + endOfWeek.format(dateFormatter);
-        } catch (Exception e) {
-            return "Invalid Week";
         }
     }
 
-    // Read employee attendance from CSV file
-    public static Map<String, Set<String>> readEmployeeAttendance(String filePath, List<Employee> employees) {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
-
-        Map<String, Set<String>> monthToWeeksMap = new HashMap<>();
-        Set<String> availableMonths = new HashSet<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            br.readLine(); // Skip header
-
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(","); // Use comma as the delimiter
-                if (values.length >= 6) {
-                    String employeeNumber = values[0].trim();
-                    String dateStr = values[3].trim(); // Adjusted index for Date
-                    String logInTime = values[4].trim(); // Adjusted index for Log In
-                    String logOutTime = values[5].trim(); // Adjusted index for Log Out
-
-                    if (logInTime.isEmpty() || logOutTime.isEmpty()) {
-                        System.out.println("Skipping incomplete record for employee: " + employeeNumber);
-                        continue;
-                    }
-
-                    try {
-                        // Parse date and times
-                        LocalDate logDate = LocalDate.parse(dateStr, dateFormatter);
-                        LocalTime logIn = LocalTime.parse(logInTime, timeFormatter);
-                        LocalTime logOut = LocalTime.parse(logOutTime, timeFormatter);
-
-                        // Validate logIn and logOut times
-                        if (logOut.isBefore(logIn)) {
-                            System.out.println("Invalid logOut time for employee: " + employeeNumber + " on " + dateStr);
-                            continue;
-                        }
-
-                        // Determine the month (e.g., "06/2023")
-                        String monthKey = logDate.format(DateTimeFormatter.ofPattern("MM/yyyy"));
-                        availableMonths.add(monthKey);
-
-                        // Determine the week number (e.g., "2023-23")
-                        String weekKey = logDate.format(DateTimeFormatter.ofPattern("yyyy-ww"));
-
-                        // Add the week to the corresponding month in the map
-                        monthToWeeksMap.computeIfAbsent(monthKey, k -> new HashSet<>()).add(weekKey);
-
-                        // Calculate hours worked for the day
-                        double hoursWorked = Duration.between(logIn, logOut).toHours();
-
-                        // Validate hours worked (must be between 0 and 24)
-                        if (hoursWorked > 24 || hoursWorked < 0) {
-                            System.out.println("Invalid hours worked for employee: " + employeeNumber + " on " + dateStr);
-                            continue;
-                        }
-
-                        // Add hours worked to the corresponding employee's weekly hours
-                        for (Employee emp : employees) {
-                            if (emp.getEmployeeNumber().equals(employeeNumber)) {
-                                emp.addHoursWorked(weekKey, hoursWorked);
-                                break;
-                            }
-                        }
-                    } catch (DateTimeParseException e) {
-                        System.out.println("Error parsing date or time for employee: " + employeeNumber + " on " + dateStr);
-                        continue;
-                    }
-                } else {
-                    System.out.println("Skipping malformed record: " + line);
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Error reading file: " + filePath);
-        }
-
-        // Debugging: Print the contents of monthToWeeksMap
-        System.out.println("Contents of monthToWeeksMap:");
-        for (Map.Entry<String, Set<String>> entry : monthToWeeksMap.entrySet()) {
-            System.out.println("Month: " + entry.getKey() + ", Weeks: " + entry.getValue());
-        }
-
-        // Print the available months
-        System.out.println("Available months: " + availableMonths);
-
-        return monthToWeeksMap;
-    }
-
-    // Nested Employee class
-    static class Employee {
-        String employeeNumber, lastName, firstName, birthDate, status, position;
-        double hourlyRate, basicSalary, riceSubsidy, phoneAllowance, clothingAllowance;
-        Map<String, Double> weeklyHours = new HashMap<>();
-
-        public Employee(String empNum, String lName, String fName, String birthDate, String status, String position, double hRate, double bSalary, double rice, double phone, double clothing) {
-            employeeNumber = empNum;
-            lastName = lName;
-            firstName = fName;
-            this.birthDate = birthDate;
-            this.status = status;
-            this.position = position;
-            hourlyRate = hRate;
-            basicSalary = bSalary;
-            riceSubsidy = rice/4; // Convert to weekly
-            phoneAllowance = phone/4; //Convert to weekly
-            clothingAllowance = clothing/4; //Convert to weekly
-        }
-   
-        public String getEmployeeNumber() {
-            return employeeNumber;
-        }
-
-        public void addHoursWorked(String week, double hours) {
-            weeklyHours.put(week, weeklyHours.getOrDefault(week, 0.0) + hours);
-            }
-
-        public double calculateGrossSalary(String weekKey) {
-            double hoursWorked = weeklyHours.getOrDefault(weekKey, 0.0);
-            return hoursWorked * hourlyRate + riceSubsidy + phoneAllowance + clothingAllowance;
+    private static void viewEmployeeAttendance(Scanner scanner, FileHandler fileHandler) {
+        printSectionHeader("VIEW EMPLOYEE ATTENDANCE");
+        
+        System.out.print("Enter Employee ID: ");
+        String employeeId = scanner.nextLine();
+        
+        Employee employee = fileHandler.findEmployee(employeeId);
+        if (employee == null) {
+            System.out.println("Employee not found!");
+            printSectionFooter();
+            return;
         }
         
-
-        public double calculateSSS() {
-            double monthlySalary = basicSalary;
-            if (monthlySalary < 3250) return 135.00 / 4; // Weekly SSS
-            else if (monthlySalary <= 3750) return 157.50 / 4;
-            else if (monthlySalary <= 4250) return 180.00 / 4;
-            else if (monthlySalary <= 4750) return 202.50 / 4;
-            else if (monthlySalary <= 5250) return 225.00 / 4;
-            else if (monthlySalary <= 5750) return 247.50 / 4;
-            else if (monthlySalary <= 6250) return 270.00 / 4;
-            else if (monthlySalary <= 6750) return 292.50 / 4;
-            else if (monthlySalary <= 7250) return 315.00 / 4;
-            else if (monthlySalary <= 7750) return 337.50 / 4;
-            else if (monthlySalary <= 8250) return 360.00 / 4;
-            else if (monthlySalary <= 8750) return 382.50 / 4;
-            else if (monthlySalary <= 9250) return 405.00 / 4;
-            else if (monthlySalary <= 9750) return 427.50 / 4;
-            else if (monthlySalary <= 10250) return 450.00 / 4;
-            else if (monthlySalary <= 10750) return 472.50 / 4;
-            else if (monthlySalary <= 11250) return 495.00 / 4;
-            else if (monthlySalary <= 11750) return 517.50 / 4;
-            else if (monthlySalary <= 12250) return 540.00 / 4;
-            else if (monthlySalary <= 12750) return 562.50 / 4;
-            else if (monthlySalary <= 13250) return 585.00 / 4;
-            else if (monthlySalary <= 13750) return 607.50 / 4;
-            else if (monthlySalary <= 14250) return 630.00 / 4;
-            else if (monthlySalary <= 14750) return 652.50 / 4;
-            else if (monthlySalary <= 15250) return 675.00 / 4;
-            else if (monthlySalary <= 15750) return 697.50 / 4;
-            else if (monthlySalary <= 16250) return 720.00 / 4;
-            else if (monthlySalary <= 16750) return 742.50 / 4;
-            else if (monthlySalary <= 17250) return 765.00 / 4;
-            else if (monthlySalary <= 17750) return 787.50 / 4;
-            else if (monthlySalary <= 18250) return 810.00 / 4;
-            else if (monthlySalary <= 18750) return 832.50 / 4;
-            else if (monthlySalary <= 19250) return 855.00 / 4;
-            else if (monthlySalary <= 19750) return 877.50 / 4;
-            else if (monthlySalary <= 20250) return 900.00 / 4;
-            else if (monthlySalary <= 20750) return 922.50 / 4;
-            else if (monthlySalary <= 21250) return 945.00 / 4;
-            else if (monthlySalary <= 21750) return 967.50 / 4;
-            else if (monthlySalary <= 22250) return 990.00 / 4;
-            else if (monthlySalary <= 22750) return 1012.50 / 4;
-            else if (monthlySalary <= 23250) return 1035.00 / 4;
-            else if (monthlySalary <= 23750) return 1057.50 / 4;
-            else if (monthlySalary <= 24250) return 1080.00 / 4;
-            else if (monthlySalary <= 24750) return 1102.50 / 4;
-            else return 1125.00 / 4;
+        List<Attendance> allRecords = fileHandler.getAllAttendanceRecords().stream()
+                .filter(r -> r.getEmployeeId().equals(employeeId))
+                .sorted(Comparator.comparing(Attendance::getDate))
+                .collect(Collectors.toList());
+        
+        if (allRecords.isEmpty()) {
+            System.out.println("No attendance records found for this employee.");
+            printSectionFooter();
+            return;
         }
         
+        List<YearMonth> availableMonths = allRecords.stream()
+                .map(r -> YearMonth.from(r.getDate()))
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
         
-        public double calculatePhilHealth() {
-            double monthlySalary = basicSalary;
-            if (monthlySalary <= 10000) return 300.00 / 4; // Weekly PhilHealth
-            else if (monthlySalary < 60000) return (monthlySalary * 0.03) / 4;
-            else return 1800.00 / 4;
+        System.out.println("\nAvailable Months:");
+        for (int i = 0; i < availableMonths.size(); i++) {
+            System.out.printf("%d. %s%n", i+1, availableMonths.get(i).format(DateTimeFormatter.ofPattern("MMMM yyyy")));
         }
-
-        public double calculatePagIbig() {
-            double monthlySalary = basicSalary;
-            if (monthlySalary <= 1500) {
-                return (monthlySalary * 0.01) / 4; // Weekly Pag-IBIG (1%)
+        System.out.print("Select month: ");
+        int monthChoice = Integer.parseInt(scanner.nextLine());
+        
+        List<Attendance> filteredRecords;
+        if (monthChoice == 0) {
+            filteredRecords = allRecords;
+        } else if (monthChoice > 0 && monthChoice <= availableMonths.size()) {
+            YearMonth selectedMonth = availableMonths.get(monthChoice - 1);
+            filteredRecords = allRecords.stream()
+                    .filter(r -> YearMonth.from(r.getDate()).equals(selectedMonth))
+                    .collect(Collectors.toList());
+        } else {
+            System.out.println("Invalid month selection.");
+            printSectionFooter();
+            return;
+        }
+        
+        System.out.println("\nWeek Options:");
+        System.out.println("1. Week 1");
+        System.out.println("2. Week 2");
+        System.out.println("3. Week 3");
+        System.out.println("4. Week 4");
+        System.out.println("5. All Weeks");
+        System.out.print("Select week (1-5): ");
+        int weekChoice = Integer.parseInt(scanner.nextLine());
+        
+        Map<Integer, List<Attendance>> weeklyRecords = filteredRecords.stream()
+                .collect(Collectors.groupingBy(
+                    r -> r.getDate().get(WeekFields.ISO.weekOfMonth())
+                ));
+        
+        System.out.println("ATTENDANCE RECORDS FOR " + employee.getLastName() + ", " + employee.getFirstName());
+        
+        if (weekChoice == 5) {
+            weeklyRecords.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> printWeekAttendance(entry.getKey(), entry.getValue()));
+        } else if (weekChoice >= 1 && weekChoice <= 4) {
+            if (weeklyRecords.containsKey(weekChoice)) {
+                printWeekAttendance(weekChoice, weeklyRecords.get(weekChoice));
             } else {
-                double contribution = monthlySalary * 0.02; // 2% for salaries over PHP 1,500
-                return Math.min(contribution, 100) / 4; // Maximum contribution is PHP 100
+                System.out.println("No records found for week " + weekChoice);
             }
+        } else {
+            System.out.println("Invalid week selection.");
         }
+        
+        printSectionFooter();
+    }
 
-        public double calculateWithholdingTax() {
-            double monthlySalary = basicSalary;
-            double taxableIncome = monthlySalary - (calculateSSS() * 4 + calculatePhilHealth() * 4 + calculatePagIbig() * 4);
-
-            if (taxableIncome <= 20832) return 0;
-            else if (taxableIncome < 33333) return (taxableIncome - 20833) * 0.20 / 4; // Weekly Withholding Tax
-            else if (taxableIncome < 66667) return (2500 + (taxableIncome - 33333) * 0.25) / 4;
-            else if (taxableIncome < 166667) return (10833 + (taxableIncome - 66667) * 0.30) / 4;
-            else if (taxableIncome < 666667) return (40833.33 + (taxableIncome - 166667) * 0.32) / 4;
-            else return (200833.33 + (taxableIncome - 666667) * 0.35) / 4;
-        }
-
-        public double calculateNetSalary(String weekKey) {
-            return calculateGrossSalary(weekKey) - (calculateSSS() + calculatePhilHealth() + calculatePagIbig() + calculateWithholdingTax());
-        }
-
-        public void displayPayrollDetailsForWeek(String weekKey) {
-            if (weeklyHours.containsKey(weekKey)) {
-                String dateRange = getWeekDateRange(weekKey);
-                System.out.println("Week: " + dateRange);
-                System.out.println("Hours Worked: " + weeklyHours.get(weekKey));
-                System.out.println("Gross Weekly Salary: PHP " + calculateGrossSalary(weekKey));
-                System.out.println("SSS Deduction (Weekly): PHP " + calculateSSS());
-                System.out.println("PhilHealth Deduction (Weekly): PHP " + calculatePhilHealth());
-                System.out.println("Pag-IBIG Deduction (Weekly): PHP " + calculatePagIbig());
-                System.out.println("Withholding Tax (Weekly): PHP " + calculateWithholdingTax());
-                System.out.println("Net Weekly Salary: PHP " + calculateNetSalary (weekKey));
-                System.out.println("--------------------------------------------------");
-            }
-        }
-
-        public double getLatestWeekHours() {
-            if (weeklyHours.isEmpty()) return 0.0;
-            List<String> sortedWeeks = new ArrayList<>(weeklyHours.keySet());
-            Collections.sort(sortedWeeks);
-            return weeklyHours.get(sortedWeeks.get(sortedWeeks.size() - 1));
-        }
-
-        public String getLatestWeekKey() {
-            if (weeklyHours.isEmpty()) return null;
-            List<String> sortedWeeks = new ArrayList<>(weeklyHours.keySet());
-            Collections.sort(sortedWeeks);
-            return sortedWeeks.get(sortedWeeks.size() - 1);
+    private static void printWeekAttendance(int weekNumber, List<Attendance> records) {
+        System.out.printf("\nWeek %d (%s to %s):\n", 
+            weekNumber,
+            records.get(0).getDate().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")),
+            records.get(records.size()-1).getDate().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")));
+        
+        System.out.printf("%-12s %-8s %-8s\n", "Date", "Time In", "Time Out");
+        for (Attendance record : records) {
+            System.out.printf("%-12s %-8s %-8s\n",
+                record.getDate().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")),
+                record.getTimeIn(),
+                record.getTimeOut());
         }
     }
-}
 
-/* Group: GCP2025
-Porte, Ethan Malcolm
-Abadilla, Jelyn 
-Barcarse, Gemmarie Sabinah
-Ignacio, Charlene Mae
-Lopez, Kristian Joy Emmanuel
-Santiago, Kiarra Anne
-Santos, Sarah Natalie Jean
-Turgo, Althea
-*/
+    private static void addAttendance(Scanner scanner, FileHandler fileHandler) {
+        printSectionHeader("ADD ATTENDANCE RECORD");
+        System.out.print("Employee ID: ");
+        String employeeId = scanner.nextLine();
+        System.out.print("Date (MM/DD/YYYY): ");
+        LocalDate date = LocalDate.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+        System.out.print("Time In (HH:MM): ");
+        LocalTime timeIn = LocalTime.parse(scanner.nextLine());
+        System.out.print("Time Out (HH:MM): ");
+        LocalTime timeOut = LocalTime.parse(scanner.nextLine());
+
+        fileHandler.recordAttendance(employeeId, date, timeIn, timeOut);
+        System.out.println("\nAttendance record added successfully!");
+        printSectionFooter();
+    }
+
+    private static void updateAttendance(Scanner scanner, FileHandler fileHandler) {
+        printSectionHeader("UPDATE ATTENDANCE RECORD");
+        System.out.print("Enter Employee ID: ");
+        String employeeId = scanner.nextLine();
+        System.out.print("Enter Date (MM/DD/YYYY): ");
+        LocalDate date = LocalDate.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+
+        Attendance record = fileHandler.findAttendanceRecord(employeeId, date);
+        if (record == null) {
+            System.out.println("Attendance record not found!");
+            printSectionFooter();
+            return;
+        }
+
+        System.out.println("\nCurrent Attendance Record:");
+        System.out.println("Time In: " + record.getTimeIn());
+        System.out.println("Time Out: " + record.getTimeOut());
+
+        System.out.print("\nEnter new Time In (HH:MM): ");
+        record.setTimeIn(LocalTime.parse(scanner.nextLine()));
+        System.out.print("Enter new Time Out (HH:MM): ");
+        record.setTimeOut(LocalTime.parse(scanner.nextLine()));
+
+        List<Attendance> records = fileHandler.getAllAttendanceRecords();
+        records.removeIf(r -> r.getEmployeeId().equals(employeeId) && r.getDate().equals(date));
+        records.add(record);
+        
+        try (PrintWriter writer = new PrintWriter(new FileWriter(fileHandler.getAttendanceFilePath()))) {
+            writer.println(FileHandler.ATTENDANCE_HEADER);
+            for (Attendance r : records) {
+                writer.printf("%s,%s,%s,%s,%s,%s\n", 
+                    r.getEmployeeId(), 
+                    "", // Last name placeholder
+                    "", // First name placeholder
+                    r.getDate().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")),
+                    r.getTimeIn(),
+                    r.getTimeOut());
+            }
+            System.out.println("\nAttendance record updated successfully!");
+        } catch (IOException e) {
+            System.out.println("Error updating attendance record: " + e.getMessage());
+        }
+        printSectionFooter();
+    }
+
+    private static void deleteAttendance(Scanner scanner, FileHandler fileHandler) {
+        printSectionHeader("DELETE ATTENDANCE RECORD");
+        System.out.print("Enter Employee ID: ");
+        String employeeId = scanner.nextLine();
+        System.out.print("Enter Date (MM/DD/YYYY): ");
+        LocalDate date = LocalDate.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+
+        List<Attendance> records = fileHandler.getAllAttendanceRecords();
+        boolean removed = records.removeIf(r -> 
+            r.getEmployeeId().equals(employeeId) && r.getDate().equals(date));
+
+        if (removed) {
+            try (PrintWriter writer = new PrintWriter(new FileWriter(fileHandler.getAttendanceFilePath()))) {
+                writer.println(FileHandler.ATTENDANCE_HEADER);
+                for (Attendance r : records) {
+                    writer.printf("%s,%s,%s,%s,%s,%s\n", 
+                        r.getEmployeeId(),
+                        "", // Last name placeholder
+                        "", // First name placeholder
+                        r.getDate().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")),
+                        r.getTimeIn(),
+                        r.getTimeOut());
+                }
+                System.out.println("\nAttendance record deleted successfully!");
+            } catch (IOException e) {
+                System.out.println("Error deleting attendance record: " + e.getMessage());
+            }
+        } else {
+            System.out.println("\nAttendance record not found!");
+        }
+        printSectionFooter();
+    }
+
+    private static void payrollMenu(Scanner scanner, PayrollCalculator payroll, FileHandler fileHandler) {
+        while (true) {
+            printSectionHeader("PAYROLL CALCULATION");
+            System.out.println("1. Calculate for Specific Employee");
+            System.out.println("2. Calculate for All Employees");
+            System.out.println("0. Back to Main Menu");
+            System.out.print("Enter your choice: ");
+            
+            String choice = scanner.nextLine();
+            
+            switch (choice) {
+                case "1":
+                    calculateEmployeePayroll(scanner, payroll, fileHandler);
+                    break;
+                case "2":
+                    calculateAllEmployeesPayroll(scanner, payroll, fileHandler);
+                    break;
+                case "0":
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    private static void calculateEmployeePayroll(Scanner scanner, PayrollCalculator payroll, FileHandler fileHandler) {
+        printSectionHeader("PAYROLL CALCULATION");
+        System.out.print("Enter Employee ID: ");
+        String employeeId = scanner.nextLine();
+        
+        Employee employee = fileHandler.findEmployee(employeeId);
+        if (employee == null) {
+            System.out.println("Employee not found!");
+            printSectionFooter();
+            return;
+        }
+        
+        List<YearMonth> availableMonths = payroll.getAvailableMonths(employeeId);
+        if (availableMonths.isEmpty()) {
+            System.out.println("No attendance records found for this employee.");
+            printSectionFooter();
+            return;
+        }
+        
+        System.out.println("\nAvailable Months:");
+        for (int i = 0; i < availableMonths.size(); i++) {
+            System.out.printf("%d. %s%n", i+1, availableMonths.get(i).format(DateTimeFormatter.ofPattern("MMMM yyyy")));
+        }
+        
+        System.out.print("Select month (number): ");
+        int monthChoice = Integer.parseInt(scanner.nextLine()) - 1;
+        YearMonth selectedMonth = availableMonths.get(monthChoice);
+        
+        System.out.println("\nWeek Options:");
+        System.out.println("1. Week 1");
+        System.out.println("2. Week 2");
+        System.out.println("3. Week 3");
+        System.out.println("4. Week 4");
+        System.out.println("5. All Weeks");
+        System.out.print("Select week (1-5): ");
+        int weekChoice = Integer.parseInt(scanner.nextLine());
+        
+        payroll.calculateWeeklyPayroll(employeeId, selectedMonth, weekChoice == 5 ? 0 : weekChoice);
+        printSectionFooter();
+    }
+
+    private static void calculateAllEmployeesPayroll(Scanner scanner, PayrollCalculator payroll, FileHandler fileHandler) {
+        printSectionHeader("PAYROLL CALCULATION FOR ALL EMPLOYEES");
+        List<YearMonth> availableMonths = payroll.getAllAvailableMonths();
+        if (availableMonths.isEmpty()) {
+            System.out.println("No attendance records found.");
+            printSectionFooter();
+            return;
+        }
+        
+        System.out.println("\nAvailable Months:");
+        for (int i = 0; i < availableMonths.size(); i++) {
+            System.out.printf("%d. %s%n", i+1, availableMonths.get(i).format(DateTimeFormatter.ofPattern("MMMM yyyy")));
+        }
+        
+        System.out.print("Select month (number): ");
+        int monthChoice = Integer.parseInt(scanner.nextLine()) - 1;
+        YearMonth selectedMonth = availableMonths.get(monthChoice);
+        
+        System.out.println("\nWeek Options:");
+        System.out.println("1. Week 1");
+        System.out.println("2. Week 2");
+        System.out.println("3. Week 3");
+        System.out.println("4. Week 4");
+        System.out.println("5. All Weeks");
+        System.out.print("Select week (1-5): ");
+        int weekChoice = Integer.parseInt(scanner.nextLine());
+        
+        payroll.calculateAllWeeklyPayroll(selectedMonth, weekChoice == 5 ? 0 : weekChoice);
+        printSectionFooter();
+    }
+}
