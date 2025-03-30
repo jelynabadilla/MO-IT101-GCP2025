@@ -1,4 +1,4 @@
-package com.mycompany.motorph;
+package motorph;
 
 import java.io.FileWriter;
 import java.io.IOException;

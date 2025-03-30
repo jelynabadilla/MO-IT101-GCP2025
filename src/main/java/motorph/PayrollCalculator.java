@@ -1,4 +1,4 @@
-package com.mycompany.motorph;
+package motorph;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;

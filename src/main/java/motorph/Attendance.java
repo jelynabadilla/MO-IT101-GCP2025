@@ -1,4 +1,4 @@
-package com.mycompany.motorph;
+package motorph;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

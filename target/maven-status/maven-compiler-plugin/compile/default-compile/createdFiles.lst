@@ -1,5 +1,5 @@
-com\mycompany\motorph\Attendance.class
-com\mycompany\motorph\MotorPH.class
-com\mycompany\motorph\FileHandler.class
-com\mycompany\motorph\PayrollCalculator.class
-com\mycompany\motorph\Employee.class
+motorph\PayrollCalculator.class
+motorph\FileHandler.class
+motorph\MotorPH.class
+motorph\Employee.class
+motorph\Attendance.class
