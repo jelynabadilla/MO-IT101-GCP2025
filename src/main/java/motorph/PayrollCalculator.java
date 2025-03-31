@@ -265,11 +265,8 @@ public class PayrollCalculator {
         double lateDeduction = calculateLateDeduction(totalLateMinutes, employee.getHourlyRate());
         
         // Calculate weekly benefits (monthly benefits / 4)
-        double weeklyAllowances = (
-            employee.getRiceSubsidy() + 
-            employee.getPhoneAllowance() + 
-            employee.getClothingAllowance()
-        ) / 4;
+        double weeklyAllowances = (employee.getRiceSubsidy() + employee.getPhoneAllowance() +  employee.getClothingAllowance()) / 4;
+
         
         // Calculate weekly government deductions
         double weeklySSS = calculateSSS(employee.getBasicSalary()) / 4;
