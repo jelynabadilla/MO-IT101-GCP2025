@@ -1,3 +1,4 @@
+// Import necessary Java libraries for file handling, date/time operations, and collections.
 package motorph;
 
 import java.io.FileWriter;
@@ -287,6 +288,7 @@ public class MotorPH {
         }
     }
 
+    // Method to delete an employee based on Employee ID.
     private static void deleteEmployee(Scanner scanner, FileHandler fileHandler) {
         printSectionHeader("DELETE EMPLOYEE");
         System.out.print("Enter Employee ID to delete: ");
@@ -300,6 +302,7 @@ public class MotorPH {
         printSectionFooter();
     }
 
+    // Method to display and handle the Attendance Management menu.
     private static void attendanceMenu(Scanner scanner, FileHandler fileHandler) {
         while (true) {
             printSectionHeader("ATTENDANCE MANAGEMENT");
@@ -311,12 +314,12 @@ public class MotorPH {
 
             switch (choice) {
                 case "1":
-                    viewEmployeeAttendance(scanner, fileHandler);
+                    viewEmployeeAttendance(scanner, fileHandler); // View attendance records for an employee.
                     break;
                 case "0":
-                    return;
+                    return; // Return to the main menu.
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice. Please try again."); // Handle invalid input.
             }
         }
     }
