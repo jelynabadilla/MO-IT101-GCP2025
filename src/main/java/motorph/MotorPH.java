@@ -57,16 +57,19 @@ public class MotorPH {
         }
     }
 
+    // Method to print a formatted section header.
     private static void printSectionHeader(String title) {
         System.out.println("\n----------------------------------------------------");
         System.out.println("---------------- " + title + " ----------------");
         System.out.println("----------------------------------------------------");
     }
 
+    // Method to print a formatted section footer.
     private static void printSectionFooter() {
         System.out.println("----------------------------------------------------");
     }
 
+    // Method to display and handle the Employee Management menu.
     private static void employeeMenu(Scanner scanner, FileHandler fileHandler) {
         while (true) {
             printSectionHeader("EMPLOYEE MANAGEMENT");
@@ -80,26 +83,27 @@ public class MotorPH {
 
             String choice = scanner.nextLine();
 
+            // Switch case to handle Employee Management options.
             switch (choice) {
                 case "1":
-                    viewAllEmployees(fileHandler);
+                    viewAllEmployees(fileHandler); // Display all employees.
                     break;
                 case "2":
-                    viewSpecificEmployee(scanner, fileHandler);
+                    viewSpecificEmployee(scanner, fileHandler); // Display details of a specific employee.
                     break;
                 case "3":
-                    addEmployee(scanner, fileHandler);
+                    addEmployee(scanner, fileHandler); // Add a new employee.
                     break;
                 case "4":
-                    updateEmployee(scanner, fileHandler);
+                    updateEmployee(scanner, fileHandler); // Update an existing employee's details.
                     break;
                 case "5":
-                    deleteEmployee(scanner, fileHandler);
+                    deleteEmployee(scanner, fileHandler); // Delete an employee.
                     break;
                 case "0":
-                    return;
+                    return; // Return to the main menu.
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice. Please try again."); // Handle invalid input.
             }
         }
     }
