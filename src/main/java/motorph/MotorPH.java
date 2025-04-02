@@ -108,6 +108,7 @@ public class MotorPH {
         }
     }
 
+    // Method to display all employees in a formatted table.
     private static void viewAllEmployees(FileHandler fileHandler) {
         List<Employee> employees = fileHandler.readEmployees();
         if (employees.isEmpty()) {
@@ -120,6 +121,8 @@ public class MotorPH {
         printSectionHeader("EMPLOYEE LIST");
         System.out.printf("%-8s %-20s %-20s %-30s %s\n", 
             "ID", "Last Name", "First Name", "Position", "Basic Salary");
+
+        // Loop through the list of the employees and print their details.
         for (Employee emp : employees) {
             System.out.printf("%-8s %-20s %-20s %-30s PHP %,.2f\n",
                 emp.getEmployeeId(),
@@ -131,6 +134,7 @@ public class MotorPH {
         printSectionFooter();
     }
 
+    // Method to display details of a specific employee based on Employee ID.
     private static void viewSpecificEmployee(Scanner scanner, FileHandler fileHandler) {
         printSectionHeader("VIEW EMPLOYEE DETAILS");
         System.out.print("Enter Employee ID: ");
@@ -143,6 +147,7 @@ public class MotorPH {
             return;
         }
 
+        // Print detailed information about the employee.
         System.out.println("\nEmployee Details:");
         System.out.printf("%-20s: %s\n", "Employee ID", employee.getEmployeeId());
         System.out.printf("%-20s: %s, %s\n", "Name", employee.getLastName(), employee.getFirstName());
