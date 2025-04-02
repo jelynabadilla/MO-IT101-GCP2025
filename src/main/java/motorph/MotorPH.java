@@ -324,6 +324,7 @@ public class MotorPH {
         }
     }
 
+    // Method to view attendance records for a specific employee.
     private static void viewEmployeeAttendance(Scanner scanner, FileHandler fileHandler) {
         printSectionHeader("VIEW EMPLOYEE ATTENDANCE");
         
@@ -337,6 +338,7 @@ public class MotorPH {
             return;
         }
         
+        // Filter and sort attendance records for the specific employee.
         List<Attendance> allRecords = fileHandler.getAllAttendanceRecords().stream()
                 .filter(r -> r.getEmployeeId().equals(employeeId))
                 .sorted(Comparator.comparing(Attendance::getDate))
@@ -348,6 +350,7 @@ public class MotorPH {
             return;
         }
         
+        // Group attendance records by month and display available months.
         List<YearMonth> availableMonths = allRecords.stream()
                 .map(r -> YearMonth.from(r.getDate()))
                 .distinct()
@@ -375,6 +378,7 @@ public class MotorPH {
             return;
         }
         
+        // Display week options and filter records by week.
         System.out.println("\nWeek Options:");
         System.out.println("1. Week 1");
         System.out.println("2. Week 2");
@@ -408,6 +412,7 @@ public class MotorPH {
         printSectionFooter();
     }
 
+    // Method to print attendance records for a specific week.
     private static void printWeekAttendance(int weekNumber, List<Attendance> records) {
         System.out.printf("\nWeek %d (%s to %s):\n", 
             weekNumber,
