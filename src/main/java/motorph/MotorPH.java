@@ -25,6 +25,7 @@ public class MotorPH {
         // Print the main header for the MotorPH Payroll System.
         printSectionHeader("MOTORPH PAYROLL SYSTEM");
 
+        // Main loop for the system menu.
         while (true) {
             System.out.println("MAIN MENU");
             System.out.println("1. Employee Management");
@@ -35,22 +36,23 @@ public class MotorPH {
 
             String choice = scanner.nextLine();
 
+            // Switch case to handle user choices in the main menu.
             switch (choice) {
                 case "1":
-                    employeeMenu(scanner, fileHandler);
+                    employeeMenu(scanner, fileHandler); // Navigate to Employee Management menu.
                     break;
                 case "2":
-                    attendanceMenu(scanner, fileHandler);
+                    attendanceMenu(scanner, fileHandler); // Navigate to Attendance Management menu.
                     break;
                 case "3":
-                    payrollMenu(scanner, payroll, fileHandler);
+                    payrollMenu(scanner, payroll, fileHandler); // Navigate to Payroll Calculation menu.
                     break;
                 case "0":
-                    System.out.println("Exiting system. Goodbye!");
+                    System.out.println("Exiting system. Goodbye!"); // Exit the system.
                     scanner.close();
                     return;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice. Please try again."); // Handle invalid input.
             }
         }
     }
