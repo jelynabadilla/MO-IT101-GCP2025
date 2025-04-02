@@ -17,10 +17,12 @@ import java.util.stream.Collectors;
 
 public class MotorPH {
     public static void main(String[] args) {
+        // Initialize Scanner for user input and FileHandler for file operations.
         Scanner scanner = new Scanner(System.in);
         FileHandler fileHandler = new FileHandler();
         PayrollCalculator payroll = new PayrollCalculator(fileHandler);
 
+        // Print the main header for the MotorPH Payroll System.
         printSectionHeader("MOTORPH PAYROLL SYSTEM");
 
         while (true) {
