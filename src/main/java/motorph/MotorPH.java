@@ -167,11 +167,13 @@ public class MotorPH {
         printSectionFooter();
     }
 
+    // Method to add a new employee by collecting input from the user.
     private static void addEmployee(Scanner scanner, FileHandler fileHandler) {
         printSectionHeader("ADD NEW EMPLOYEE");
         Employee employee = new Employee();
         Map<String, String> data = new HashMap<>();
 
+        // Collect employee details from the user.
         System.out.print("Employee ID: ");
         data.put("EmployeeID", scanner.nextLine());
         System.out.print("Last Name: ");
@@ -211,12 +213,14 @@ public class MotorPH {
         System.out.print("Hourly Rate: ");
         data.put("HourlyRate", scanner.nextLine());
 
+        // Create and save the new employee.
         employee = new Employee(data);
         fileHandler.saveEmployee(employee);
         System.out.println("\nEmployee added successfully!");
         printSectionFooter();
     }
 
+    // Method to update an existing employee's details.
     private static void updateEmployee(Scanner scanner, FileHandler fileHandler) {
         printSectionHeader("UPDATE EMPLOYEE");
         System.out.print("Enter Employee ID to update: ");
@@ -229,6 +233,7 @@ public class MotorPH {
             return;
         }
 
+        // Display current employee details and allow updates.
         System.out.println("\nCurrent Employee Details:");
         System.out.println("1. Last Name: " + employee.getLastName());
         System.out.println("2. First Name: " + employee.getFirstName());
@@ -250,6 +255,7 @@ public class MotorPH {
                 break;
             }
 
+            // Switch case to handle specific fields for updating.
             switch (choice) {
                 case "1":
                     System.out.print("Enter new Last Name: ");
