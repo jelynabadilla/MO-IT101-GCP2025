@@ -428,6 +428,7 @@ public class MotorPH {
         }
     }
 
+    // Method to add a new attendance record.
     private static void addAttendance(Scanner scanner, FileHandler fileHandler) {
         printSectionHeader("ADD ATTENDANCE RECORD");
         System.out.print("Employee ID: ");
@@ -444,6 +445,7 @@ public class MotorPH {
         printSectionFooter();
     }
 
+    // Method to update an existing attendance record.
     private static void updateAttendance(Scanner scanner, FileHandler fileHandler) {
         printSectionHeader("UPDATE ATTENDANCE RECORD");
         System.out.print("Enter Employee ID: ");
@@ -458,6 +460,7 @@ public class MotorPH {
             return;
         }
 
+        // Display current attendance record and allow updates.
         System.out.println("\nCurrent Attendance Record:");
         System.out.println("Time In: " + record.getTimeIn());
         System.out.println("Time Out: " + record.getTimeOut());
@@ -489,6 +492,7 @@ public class MotorPH {
         printSectionFooter();
     }
 
+    // Method to delete an attendance record.
     private static void deleteAttendance(Scanner scanner, FileHandler fileHandler) {
         printSectionHeader("DELETE ATTENDANCE RECORD");
         System.out.print("Enter Employee ID: ");
@@ -522,6 +526,7 @@ public class MotorPH {
         printSectionFooter();
     }
 
+    // Method to display and handle the Payroll Calculation menu.
     private static void payrollMenu(Scanner scanner, PayrollCalculator payroll, FileHandler fileHandler) {
         while (true) {
             printSectionHeader("PAYROLL CALCULATION");
@@ -534,19 +539,20 @@ public class MotorPH {
             
             switch (choice) {
                 case "1":
-                    calculateEmployeePayroll(scanner, payroll, fileHandler);
+                    calculateEmployeePayroll(scanner, payroll, fileHandler); // Calculate payroll for a specific employee.
                     break;
                 case "2":
-                    calculateAllEmployeesPayroll(scanner, payroll, fileHandler);
+                    calculateAllEmployeesPayroll(scanner, payroll, fileHandler); // Calculate payroll for all employees.
                     break;
                 case "0":
-                    return;
+                    return; // Return to the main menu.
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice. Please try again."); // Handle invalid input.
             }
         }
     }
 
+    // Method to calculate payroll for a specific employee.
     private static void calculateEmployeePayroll(Scanner scanner, PayrollCalculator payroll, FileHandler fileHandler) {
         printSectionHeader("PAYROLL CALCULATION");
         System.out.print("Enter Employee ID: ");
@@ -559,6 +565,7 @@ public class MotorPH {
             return;
         }
         
+        // Get available months for the employee's attendance records.
         List<YearMonth> availableMonths = payroll.getAvailableMonths(employeeId);
         if (availableMonths.isEmpty()) {
             System.out.println("No attendance records found for this employee.");
@@ -575,6 +582,7 @@ public class MotorPH {
         int monthChoice = Integer.parseInt(scanner.nextLine()) - 1;
         YearMonth selectedMonth = availableMonths.get(monthChoice);
         
+        // Display week options and calculate payroll for the selected week or all weeks.
         System.out.println("\nWeek Options:");
         System.out.println("1. Week 1");
         System.out.println("2. Week 2");
@@ -588,8 +596,11 @@ public class MotorPH {
         printSectionFooter();
     }
 
+    // Method to calculate payroll for all employees.
     private static void calculateAllEmployeesPayroll(Scanner scanner, PayrollCalculator payroll, FileHandler fileHandler) {
         printSectionHeader("PAYROLL CALCULATION FOR ALL EMPLOYEES");
+        
+        // Get available months for all employees' attendance records.
         List<YearMonth> availableMonths = payroll.getAllAvailableMonths();
         if (availableMonths.isEmpty()) {
             System.out.println("No attendance records found.");
@@ -606,6 +617,7 @@ public class MotorPH {
         int monthChoice = Integer.parseInt(scanner.nextLine()) - 1;
         YearMonth selectedMonth = availableMonths.get(monthChoice);
         
+        // Display week options and calculate payroll for the selcted week or all weeks.
         System.out.println("\nWeek Options:");
         System.out.println("1. Week 1");
         System.out.println("2. Week 2");
