@@ -1,5 +1,5 @@
 package motorph;
-
+//Import the neccesary classes and packages that the file handler needs to function.
 import java.io.*;
 import java.nio.file.*;
 import java.time.*;
@@ -11,20 +11,22 @@ public class FileHandler {
     private static final String DATA_FOLDER = "data";
     private static final String EMPLOYEE_FILE = DATA_FOLDER + File.separator + "employees.csv";
     private static final String ATTENDANCE_FILE = DATA_FOLDER + File.separator + "attendance.csv";
-    
+    //CSV file headers
     public static final String EMPLOYEE_HEADER = "Employee #,Last Name,First Name,Birthday,Address,Phone Number,SSS #,Philhealth #,TIN #,Pag-ibig #,Status,Position,Immediate Supervisor,Basic Salary,Rice Subsidy,Phone Allowance,Clothing Allowance,Gross Semi-monthly Rate,Hourly Rate";
     public static final String ATTENDANCE_HEADER = "Employee #,Last Name,First Name,Date,Log In,Log Out";
 
     public FileHandler() {
         try {
+            //This ensures that the data folder exists
             Files.createDirectories(Paths.get(DATA_FOLDER));
+            //Creates a CSV file with headers if they don't exist
             ensureFileExists(EMPLOYEE_FILE, EMPLOYEE_HEADER);
             ensureFileExists(ATTENDANCE_FILE, ATTENDANCE_HEADER);
         } catch (IOException e) {
             System.err.println("Error creating data folder or files: " + e.getMessage());
         }
     }
-
+    //This is a helper method to check and create file with header if it doesn't exist
     private void ensureFileExists(String filePath, String header) throws IOException {
         File file = new File(filePath);
         if (!file.exists()) {
@@ -33,15 +35,17 @@ public class FileHandler {
             }
         }
     }
-
+    // Reads employee records from the CSV file
     public List<Employee> readEmployees() {
         List<Employee> employees = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(EMPLOYEE_FILE))) {
             String line;
             reader.readLine(); // Skip header
             while ((line = reader.readLine()) != null) {
+                // Handle commas inside quoted strings properly
                 String[] values = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
                 if (values.length >= 19) {
+                    // Map values to employee fields
                     Map<String, String> data = new HashMap<>();
                     data.put("EmployeeID", values[0]);
                     data.put("LastName", values[1]);
@@ -71,7 +75,7 @@ public class FileHandler {
         }
         return employees;
     }
-
+    // Overwrites the employee CSV file with all employees in the list
     public void saveAllEmployees(List<Employee> employees) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(EMPLOYEE_FILE))) {
             writer.println(EMPLOYEE_HEADER);
@@ -82,7 +86,7 @@ public class FileHandler {
             System.err.println("Error saving employee file: " + e.getMessage());
         }
     }
-
+    // Reads all attendance records from the attendance CSV
     public List<Attendance> getAllAttendanceRecords() {
         List<Attendance> records = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(ATTENDANCE_FILE))) {
@@ -92,6 +96,7 @@ public class FileHandler {
                 String[] values = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
                 if (values.length == 6) {
                     // Parse time with optional leading zero
+                    // Handle 4-digit time strings by prepending '0'
                     LocalTime timeIn = LocalTime.parse(values[4].length() == 4 ? "0" + values[4] : values[4]);
                     LocalTime timeOut = LocalTime.parse(values[5].length() == 4 ? "0" + values[5] : values[5]);
                     
@@ -107,7 +112,7 @@ public class FileHandler {
         }
         return records;
     }
-
+    // Filters attendance records by employee ID and date range
     public List<Attendance> getAttendanceRecords(String employeeId, LocalDate startDate, LocalDate endDate) {
         return getAllAttendanceRecords().stream()
                 .filter(r -> r.getEmployeeId().equals(employeeId) &&
@@ -116,7 +121,7 @@ public class FileHandler {
                 .sorted(Comparator.comparing(Attendance::getDate))
                 .collect(Collectors.toList());
     }
-
+    // Appends a new attendance record to the CSV file
     public void recordAttendance(String employeeId, LocalDate date, LocalTime timeIn, LocalTime timeOut) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(ATTENDANCE_FILE, true))) {
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -131,7 +136,7 @@ public class FileHandler {
             System.err.println("Error recording attendance: " + e.getMessage());
         }
     }
-
+    // Finds and returns a specific employee by ID
     public Employee findEmployee(String id) {
         List<Employee> employees = readEmployees();
         return employees.stream()
@@ -139,14 +144,14 @@ public class FileHandler {
                 .findFirst()
                 .orElse(null);
     }
-    
+    // Updates or adds an employee in the list and saves it
     public void saveEmployee(Employee employee) {
         List<Employee> employees = readEmployees();
         employees.removeIf(emp -> emp.getEmployeeId().equals(employee.getEmployeeId()));
         employees.add(employee);
         saveAllEmployees(employees);
     }
-    
+    // Deletes an employee by ID and updates the CSV
     public boolean deleteEmployee(String id) {
         List<Employee> employees = readEmployees();
         boolean removed = employees.removeIf(emp -> emp.getEmployeeId().equals(id));
@@ -155,7 +160,7 @@ public class FileHandler {
         }
         return removed;
     }
-    
+    // Finds an attendance record for a specific employee on a specific date
     public Attendance findAttendanceRecord(String employeeId, LocalDate date) {
         List<Attendance> records = getAllAttendanceRecords();
         return records.stream()
@@ -163,7 +168,7 @@ public class FileHandler {
                 .findFirst()
                 .orElse(null);
     }
-    
+    // Returns the path to the attendance CSV file
     public String getAttendanceFilePath() {
         return ATTENDANCE_FILE;
     }
